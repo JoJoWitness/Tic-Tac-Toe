@@ -133,7 +133,7 @@ button:active{
 }
 
 #popUp > h1{
-    font-size: 35px;
+    font-size: max(20px, 4.5vh);
     color:#FAF9F9;
     font-family: 'Roboto', sans-serif;
 }
