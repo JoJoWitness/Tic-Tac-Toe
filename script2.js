@@ -46,15 +46,19 @@ const gameControls = (function(){
            round+=1;
          }
          else if (round%2 != 0){
-           e.target.textContent= "O";
-           playedCells[parseInt(e.target.dataset.index)-1] = "O";
+           
+        aiMove()
            round++
          }
        
         
          chooseWinner(playedCells)
-       
+         aiMove()
     }
+   }
+   if(round%2 != 0){
+    
+    
    }
 
     const chooseWinner= (playedCells) =>{
@@ -99,14 +103,14 @@ const gameControls = (function(){
     restartButton.addEventListener('click', restart);
     
     function restart(){
-    round=0;
-    gameHasFinished=false;
-    cell.forEach(cell => cell.textContent = "")
-    for(let k = 0; k<8; k++){
-    playedCells.pop()}
-    playerWhoWon=0;
-    removePopUp()
-    console.log('gat')
+        round=0;
+        gameHasFinished=false;
+        cell.forEach(cell => cell.textContent = "")
+        for(let k = 0; k<8; k++){
+        playedCells.pop()}
+        playerWhoWon=0;
+        removePopUp()
+        console.log('gat')
     }
 
     
@@ -131,4 +135,88 @@ const gameControls = (function(){
     function removePopUp(){
        gameContainer.removeChild(blankDiv);
     }
+
+    // Add this function inside your gameControls module
+    function aiMove() {
+        let bestScore = Infinity;
+        let move;
+        for (let i = 0; i < playedCells.length; i++) {
+            if (!playedCells[i]) {
+                playedCells[i] = "O";
+                let score = minimax(playedCells, 0, false);
+                playedCells[i] = null;
+                if (score < bestScore) {
+                    bestScore = score;
+                    move = i;
+                }
+            }
+        }
+        playedCells[move] = "O";
+        document.querySelectorAll('.cell')[move].textContent = "O";
+        round++;
+        checkWin();
+    }
+    
+    // Minimax function adapted for your game
+    function minimax(board, depth, isMaximizing) {
+        if (checkWinner(board, "X")) return 10;
+        if (checkWinner(board, "O")) return -10;
+        if (isDraw()) return 0;
+    
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let i = 0; i < board.length; i++) {
+                if (!board[i]) {
+                    board[i] = "X";
+                    let score = minimax(board, depth + 1, false);
+                    board[i] = null;
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let i = 0; i < board.length; i++) {
+                if (!board[i]) {
+                    board[i] = "O";
+                    let score = minimax(board, depth + 1, true);
+                    board[i] = null;
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
+        }
+    }
+
+// Modify your putMarker function to call aiMove after a player's move
+
+function checkWinner(board, player) {
+    return winningConditions.some(condition => 
+        condition.every(index => board[index] === player));
+}
+
+function isDraw() {
+    return playedCells.every(cell => cell);
+}
+
+// Add checkWin function to handle win or draw
+function checkWin() {
+    if (checkWinner(playedCells, "X")) {
+        console.log("X wins");
+        gameHasFinished = true;
+        return true;
+    } else if (checkWinner(playedCells, "O")) {
+        console.log("O wins");
+        gameHasFinished = true;
+        return true;
+    } else if (isDraw()) {
+        console.log("Draw");
+        gameHasFinished = true;
+        return true;
+    }
+    return false;
+}
+
+
+
 })()
