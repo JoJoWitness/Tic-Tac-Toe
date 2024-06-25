@@ -40,20 +40,14 @@ const gameControls = (function(){
 
     function putMarker(e){
         if(e.target.textContent == false && gameHasFinished === false){
-         if (round%2==0){
            e.target.textContent= "X";
            playedCells[parseInt(e.target.dataset.index)-1] = "X";
            round+=1;
-         }
-         else if (round%2 != 0){
-           
-        aiMove()
-           round++
-         }
+         
        
-        
-         chooseWinner(playedCells)
          aiMove()
+         chooseWinner(playedCells)
+         
     }
    }
    if(round%2 != 0){
@@ -76,7 +70,7 @@ const gameControls = (function(){
             &&playedCells[a]
             &&playedCells[b]
             &&playedCells[c]){
-                console.log('ryuk el gato')
+        
                 if(round%2 !=0){
                     playerModule.playerName1();
                     playerWhoWon=1;
@@ -86,6 +80,7 @@ const gameControls = (function(){
                     playerModule.playerName2();
                     playerWhoWon=2;
                 }
+                console.log("gato?")
                 gameHasFinished=true;
                 showPopUp();
             }
@@ -107,10 +102,9 @@ const gameControls = (function(){
         gameHasFinished=false;
         cell.forEach(cell => cell.textContent = "")
         for(let k = 0; k<8; k++){
-        playedCells.pop()}
+        playedCells[k]=""}
         playerWhoWon=0;
         removePopUp()
-        console.log('gat')
     }
 
     
@@ -152,7 +146,8 @@ const gameControls = (function(){
             }
         }
         playedCells[move] = "O";
-        document.querySelectorAll('.cell')[move].textContent = "O";
+        console.log
+        cell[move].textContent = "O";
         round++;
         checkWin();
     }
@@ -204,14 +199,17 @@ function checkWin() {
     if (checkWinner(playedCells, "X")) {
         console.log("X wins");
         gameHasFinished = true;
+        chooseWinner(playedCells)
         return true;
     } else if (checkWinner(playedCells, "O")) {
         console.log("O wins");
         gameHasFinished = true;
+        chooseWinner(playedCells)
         return true;
     } else if (isDraw()) {
         console.log("Draw");
         gameHasFinished = true;
+        chooseWinner(playedCells)
         return true;
     }
     return false;
